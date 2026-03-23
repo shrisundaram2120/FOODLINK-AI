@@ -21,6 +21,7 @@ const FoodLinkAI = (() => {
     const sessionStatusChip = document.getElementById("sessionStatusChip");
     const workspaceModeChip = document.getElementById("workspaceModeChip");
     const workspaceSignalChip = document.getElementById("workspaceSignalChip");
+    const clearDataButton = document.getElementById("clearDataButton");
     const logoutButton = document.getElementById("logoutButton");
     const form = document.getElementById("surplusForm");
     const cameraButton = document.getElementById("cameraButton");
@@ -161,6 +162,14 @@ const FoodLinkAI = (() => {
             localStorage.removeItem(STORAGE_KEYS.orders);
             localStorage.removeItem(STORAGE_KEYS.activity);
         }
+    }
+
+    function clearPersistedState() {
+        orders.splice(0, orders.length);
+        activityEntries.splice(0, activityEntries.length);
+        latestPosting = null;
+        localStorage.removeItem(STORAGE_KEYS.orders);
+        localStorage.removeItem(STORAGE_KEYS.activity);
     }
 
     function estimateAmbientTemperature(storageCondition) {
@@ -507,6 +516,30 @@ const FoodLinkAI = (() => {
         workspaceSignalChip.textContent = "Waiting for activity";
         panels.forEach((panel) => panel.classList.remove("active"));
         prependActivity("Logout", "Session ended", "Returned to the role selection overlay.");
+    });
+
+    clearDataButton.addEventListener("click", () => {
+        const confirmed = window.confirm("Are you sure you want to clear all demo data?");
+        if (!confirmed) return;
+
+        clearPersistedState();
+        resultCard.classList.add("hidden");
+        photoPreview.src = "";
+        photoPreview.classList.add("hidden");
+        form.reset();
+        selectedStorage = "Room Temperature";
+        storageChips.forEach((chip) => {
+            chip.classList.toggle("active", chip.dataset.storage === selectedStorage);
+        });
+        renderOrganizerView();
+        renderNgoView();
+        renderActivityFeed();
+        railLiveSignal.textContent = "Idle";
+        workspaceSignalChip.textContent = "Waiting for activity";
+        ngoStatus.textContent = "Pending";
+        prependActivity("System", "Demo data cleared", "All saved orders, assignments, and activity history were removed.");
+        saveState();
+        resetViewport();
     });
 
     claimButton.addEventListener("click", () => {
