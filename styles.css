@@ -90,6 +90,7 @@ body {
 }
 
 .app-hidden {
+    display: none !important;
     visibility: hidden;
     pointer-events: none;
 }
@@ -253,12 +254,12 @@ h2 {
 }
 
 .panel {
-    display: none;
+    display: none !important;
     margin-top: 26px;
 }
 
 .panel.active {
-    display: block;
+    display: block !important;
 }
 
 .pill {
@@ -449,7 +450,7 @@ select:focus {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 @media (max-width: 980px) {
