@@ -54,7 +54,7 @@ body {
 
 .login-layout {
     display: grid;
-    grid-template-columns: 1.5fr 0.8fr;
+    grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.75fr);
     gap: 22px;
     align-items: start;
 }
@@ -83,7 +83,7 @@ body {
 
 .trust-strip {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 16px;
 }
 
@@ -110,7 +110,7 @@ body {
 
 .role-card-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 18px;
 }
 
@@ -123,8 +123,8 @@ body {
 }
 
 .login-role-card h2 {
-    font-size: clamp(1.9rem, 3vw, 2.6rem);
-    margin-bottom: 12px;
+    font-size: clamp(1.45rem, 2.4vw, 2.15rem);
+    margin-bottom: 10px;
 }
 
 .login-role-card.featured {
@@ -136,8 +136,8 @@ body {
 
 .login-role-card p:not(.eyebrow) {
     color: var(--muted);
-    line-height: 1.65;
-    min-height: 72px;
+    line-height: 1.48;
+    min-height: 0;
 }
 
 .role-list {
@@ -146,7 +146,7 @@ body {
     color: var(--muted);
     display: grid;
     gap: 6px;
-    font-size: 0.98rem;
+    font-size: 0.94rem;
 }
 
 .login-role-card .button {
@@ -280,20 +280,20 @@ p {
 }
 
 h1 {
-    font-size: clamp(2.7rem, 5vw, 4.8rem);
-    line-height: 0.98;
-    max-width: 11ch;
-    margin-bottom: 16px;
+    font-size: clamp(1.9rem, 4vw, 3.9rem);
+    line-height: 1.02;
+    max-width: 13ch;
+    margin-bottom: 14px;
 }
 
 h2 {
-    font-size: clamp(1.9rem, 3vw, 3rem);
+    font-size: clamp(1.5rem, 2.4vw, 2.4rem);
 }
 
 .lead {
     max-width: 56ch;
     color: rgba(242, 247, 241, 0.82);
-    line-height: 1.7;
+    line-height: 1.55;
     margin-bottom: 0;
 }
 
@@ -799,5 +799,71 @@ select:focus {
     .role-tab,
     .button {
         width: 100%;
+    }
+}
+
+@media (max-height: 860px) {
+    .login-overlay {
+        padding: 16px 12px;
+        align-items: start;
+    }
+
+    .login-shell {
+        min-height: auto;
+    }
+
+    .login-layout {
+        gap: 16px;
+    }
+
+    .login-hero,
+    .login-role-card,
+    .mock-login-card {
+        padding: 18px;
+        border-radius: 22px;
+    }
+
+    .trust-card {
+        padding: 14px;
+    }
+
+    .role-card-grid {
+        gap: 14px;
+    }
+
+    .lead,
+    .login-role-card p:not(.eyebrow),
+    .login-hint {
+        font-size: 0.96rem;
+        line-height: 1.42;
+    }
+
+    .role-list {
+        gap: 4px;
+        margin-bottom: 14px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-height: 740px) {
+    .login-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .mock-login-card {
+        position: static;
+    }
+
+    .trust-strip {
+        grid-template-columns: 1fr;
+    }
+
+    .role-card-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    h1 {
+        font-size: clamp(1.6rem, 3vw, 2.6rem);
+        max-width: 15ch;
     }
 }
