@@ -1,4 +1,9 @@
 const FoodLinkAI = (() => {
+    const STORAGE_KEYS = {
+        orders: "foodlink.orders",
+        activity: "foodlink.activity"
+    };
+
     const loginOverlay = document.getElementById("loginOverlay");
     const appShell = document.getElementById("appShell");
     const loginTriggers = Array.from(document.querySelectorAll(".login-trigger"));
@@ -60,6 +65,7 @@ const FoodLinkAI = (() => {
     let latestPosting = null;
     let pendingRole = null;
     const orders = [];
+    const activityEntries = [];
 
     const ROLE_CONFIG = {
         hotel: {
@@ -95,23 +101,66 @@ const FoodLinkAI = (() => {
     };
 
     function prependActivity(tag, title, detail) {
-        const item = document.createElement("div");
-        item.className = "activity-item";
-        item.innerHTML = `
-            <span class="activity-tag">${tag}</span>
-            <strong>${title}</strong>
-            <p>${detail}</p>
-        `;
+        activityEntries.unshift({ tag, title, detail });
 
-        activityFeed.prepend(item);
-
-        while (activityFeed.children.length > 5) {
-            activityFeed.removeChild(activityFeed.lastElementChild);
+        while (activityEntries.length > 5) {
+            activityEntries.pop();
         }
+
+        renderActivityFeed();
+        saveState();
+    }
+
+    function renderActivityFeed() {
+        if (!activityEntries.length) {
+            activityFeed.innerHTML = `
+                <div class="activity-item">
+                    <span class="activity-tag">System</span>
+                    <strong>Awaiting login</strong>
+                    <p>Choose a role to enter the FoodLink AI platform.</p>
+                </div>
+            `;
+            return;
+        }
+
+        activityFeed.innerHTML = activityEntries
+            .map(
+                (entry) => `
+                    <div class="activity-item">
+                        <span class="activity-tag">${entry.tag}</span>
+                        <strong>${entry.title}</strong>
+                        <p>${entry.detail}</p>
+                    </div>
+                `,
+            )
+            .join("");
     }
 
     function resetViewport() {
         window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    }
+
+    function saveState() {
+        localStorage.setItem(STORAGE_KEYS.orders, JSON.stringify(orders));
+        localStorage.setItem(STORAGE_KEYS.activity, JSON.stringify(activityEntries));
+    }
+
+    function loadState() {
+        try {
+            const savedOrders = JSON.parse(localStorage.getItem(STORAGE_KEYS.orders) || "[]");
+            const savedActivity = JSON.parse(localStorage.getItem(STORAGE_KEYS.activity) || "[]");
+
+            if (Array.isArray(savedOrders)) {
+                orders.splice(0, orders.length, ...savedOrders);
+            }
+
+            if (Array.isArray(savedActivity)) {
+                activityEntries.splice(0, activityEntries.length, ...savedActivity);
+            }
+        } catch (error) {
+            localStorage.removeItem(STORAGE_KEYS.orders);
+            localStorage.removeItem(STORAGE_KEYS.activity);
+        }
     }
 
     function estimateAmbientTemperature(storageCondition) {
@@ -400,6 +449,7 @@ const FoodLinkAI = (() => {
         latestPosting = orders[orders.length - 1] || null;
         renderOrganizerView();
         renderNgoView();
+        saveState();
     }
 
     cameraButton.addEventListener("click", () => {
@@ -563,8 +613,10 @@ const FoodLinkAI = (() => {
         prependActivity("NGO", "Pickup available", `${order.recommendedNgo} can now claim ${order.foodType} from ${order.hotelName}.`);
     });
 
+    loadState();
     renderOrganizerView();
     renderNgoView();
+    renderActivityFeed();
     resetViewport();
 
     return {
