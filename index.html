@@ -9,71 +9,129 @@
 <body>
     <div id="loginOverlay" class="login-overlay">
         <section class="login-shell">
-            <div class="login-hero">
-                <p class="eyebrow">Role-based access</p>
-                <h1>Sign in to the right FoodLink AI workspace.</h1>
-                <p class="lead">
-                    Choose your role, complete the mock login, and the prototype will open only
-                    the dashboard tools relevant to that user type.
-                </p>
-            </div>
+            <div class="login-layout">
+                <section class="login-story">
+                    <div class="login-hero">
+                        <p class="eyebrow">Role-based access</p>
+                        <h1>Sign in to the right FoodLink AI workspace.</h1>
+                        <p class="lead">
+                            Coordinate hotel surplus, NGO pickups, and FoodLink dispatch operations
+                            from one platform with role-specific dashboards.
+                        </p>
+                    </div>
 
-            <div class="role-card-grid">
-                <article class="login-role-card">
-                    <p class="eyebrow">Hotel partner</p>
-                    <h2>Hotel Partner</h2>
-                    <p>Access Post Surplus and Freshness AI tools for surplus food publishing.</p>
-                    <button type="button" class="button button-primary login-trigger" data-role="hotel">Login</button>
-                </article>
+                    <div class="trust-strip">
+                        <article class="trust-card">
+                            <span>Smart triage</span>
+                            <strong>TensorFlow CNN + XGBoost flow</strong>
+                        </article>
+                        <article class="trust-card">
+                            <span>Dispatch model</span>
+                            <strong>Urgency-first NGO matching</strong>
+                        </article>
+                        <article class="trust-card">
+                            <span>Prototype mode</span>
+                            <strong>GitHub Pages compatible</strong>
+                        </article>
+                    </div>
 
-                <article class="login-role-card">
-                    <p class="eyebrow">NGO partner</p>
-                    <h2>NGO Partner</h2>
-                    <p>Access Available Pickups and Claim tools to reserve food collections.</p>
-                    <button type="button" class="button button-primary login-trigger" data-role="ngo">Login</button>
-                </article>
+                    <div class="role-card-grid">
+                        <article class="login-role-card featured">
+                            <p class="eyebrow">Hotel partner</p>
+                            <h2>Hotel Partner</h2>
+                            <p>Publish food batches, upload photos, and run Freshness AI before dispatch.</p>
+                            <ul class="role-list">
+                                <li>Post Surplus intake</li>
+                                <li>Freshness AI result</li>
+                                <li>Publishing workflow</li>
+                            </ul>
+                            <button type="button" class="button button-primary login-trigger" data-role="hotel">Login as Hotel</button>
+                        </article>
 
-                <article class="login-role-card">
-                    <p class="eyebrow">FoodLink admin</p>
-                    <h2>FoodLink Admin</h2>
-                    <p>Access the Global Matching Engine and NGO Verification workflow.</p>
-                    <button type="button" class="button button-primary login-trigger" data-role="admin">Login</button>
-                </article>
-            </div>
+                        <article class="login-role-card">
+                            <p class="eyebrow">NGO partner</p>
+                            <h2>NGO Partner</h2>
+                            <p>Review available pickups, view freshness windows, and claim verified collections.</p>
+                            <ul class="role-list">
+                                <li>Available Pickups</li>
+                                <li>Pickup detail card</li>
+                                <li>Claim action</li>
+                            </ul>
+                            <button type="button" class="button button-primary login-trigger" data-role="ngo">Login as NGO</button>
+                        </article>
 
-            <section id="mockLoginCard" class="mock-login-card hidden">
-                <div class="panel-intro">
-                    <div>
-                        <p class="eyebrow">Mock login</p>
+                        <article class="login-role-card">
+                            <p class="eyebrow">FoodLink admin</p>
+                            <h2>FoodLink Admin</h2>
+                            <p>Manage the global matching engine, dispatch decisions, and NGO verification operations.</p>
+                            <ul class="role-list">
+                                <li>Global Matching Engine</li>
+                                <li>Dispatch oversight</li>
+                                <li>NGO Verification</li>
+                            </ul>
+                            <button type="button" class="button button-primary login-trigger" data-role="admin">Login as Admin</button>
+                        </article>
+                    </div>
+                </section>
+
+                <aside id="mockLoginCard" class="mock-login-card hidden">
+                    <div class="mock-login-top">
+                        <p class="eyebrow">Secure access</p>
                         <h3 id="loginRoleTitle">Role Login</h3>
+                        <p id="loginRoleHint" class="login-hint">
+                            Continue with your role workspace credentials.
+                        </p>
                     </div>
-                </div>
-                <form id="mockLoginForm" class="mock-login-form">
-                    <div class="field-group">
-                        <label for="loginEmail">Email</label>
-                        <input id="loginEmail" type="email" placeholder="name@foodlink.ai" required>
+
+                    <div class="login-mini-stats">
+                        <div>
+                            <span>Environment</span>
+                            <strong>Prototype Demo</strong>
+                        </div>
+                        <div>
+                            <span>Session Type</span>
+                            <strong>Mock Authentication</strong>
+                        </div>
                     </div>
-                    <div class="field-group">
-                        <label for="loginPassword">Password</label>
-                        <input id="loginPassword" type="password" placeholder="Enter password" required>
-                    </div>
-                    <div class="action-row">
-                        <button type="submit" class="button button-primary">Enter Dashboard</button>
-                        <button type="button" id="cancelLogin" class="button button-secondary">Back</button>
-                    </div>
-                </form>
-            </section>
+
+                    <form id="mockLoginForm" class="mock-login-form">
+                        <div class="field-group">
+                            <label for="loginEmail">Email</label>
+                            <input id="loginEmail" type="email" placeholder="name@foodlink.ai" required>
+                        </div>
+                        <div class="field-group">
+                            <label for="loginPassword">Password</label>
+                            <input id="loginPassword" type="password" placeholder="Enter password" required>
+                        </div>
+                        <div class="action-row">
+                            <button type="submit" class="button button-primary">Enter Dashboard</button>
+                            <button type="button" id="cancelLogin" class="button button-secondary">Back</button>
+                        </div>
+                    </form>
+                </aside>
+            </div>
         </section>
     </div>
 
     <main id="appShell" class="shell app-hidden">
-        <section class="masthead">
+        <header class="app-topbar">
+            <div class="brand-block">
+                <p class="eyebrow">FoodLink AI</p>
+                <h2>Operations Platform</h2>
+            </div>
+            <div class="topbar-actions">
+                <span id="activeRoleBadge" class="pill">Not logged in</span>
+                <span id="sessionStatusChip" class="pill subtle-pill">Demo session</span>
+                <button type="button" id="logoutButton" class="role-tab">Logout</button>
+            </div>
+        </header>
+
+        <section class="app-overview">
             <div class="masthead-copy">
-                <p class="eyebrow">Food rescue platform</p>
-                <h1>One flow, three interfaces, zero food wasted.</h1>
-                <p class="lead">
-                    This prototype now includes dedicated interfaces for hotel managers,
-                    FoodLink AI organizers, and NGO partners with one shared freshness workflow.
+                <p class="eyebrow">Authenticated workspace</p>
+                <h1 id="workspaceTitle">Multi-interface demo</h1>
+                <p id="workspaceSubtitle" class="lead">
+                    Role-specific workflows for publishing surplus, dispatching pickups, and verifying NGO operations.
                 </p>
             </div>
 
@@ -93,19 +151,20 @@
             </div>
         </section>
 
-        <section class="workspace">
-            <div class="workspace-header">
-                <div>
-                    <p class="eyebrow">Authenticated workspace</p>
-                    <h2 id="workspaceTitle">Multi-interface demo</h2>
+        <section class="app-layout">
+            <section class="workspace">
+                <div class="workspace-header">
+                    <div class="workspace-meta">
+                        <p class="eyebrow">Live workspace</p>
+                        <h3 id="workspaceSectionTitle">Operations overview</h3>
+                    </div>
+                    <div class="role-tabs">
+                        <span id="workspaceModeChip" class="pill subtle-pill">Ready</span>
+                        <span id="workspaceSignalChip" class="pill subtle-pill">Waiting for activity</span>
+                    </div>
                 </div>
-                <div class="role-tabs">
-                    <span id="activeRoleBadge" class="pill">Not logged in</span>
-                    <button type="button" id="logoutButton" class="role-tab">Logout</button>
-                </div>
-            </div>
 
-            <section id="hotelPanel" class="panel role-panel">
+                <section id="hotelPanel" class="panel role-panel">
                 <div class="panel-intro">
                     <div>
                         <p class="eyebrow">Hotel interface</p>
@@ -196,9 +255,9 @@
                         <ul id="notesList"></ul>
                     </div>
                 </section>
-            </section>
+                </section>
 
-            <section id="ngoPanel" class="panel role-panel">
+                <section id="ngoPanel" class="panel role-panel">
                 <div class="panel-intro">
                     <div>
                         <p class="eyebrow">NGO interface</p>
@@ -234,9 +293,9 @@
                         No food listing yet. Once a hotel publishes a surplus batch, NGOs can claim it here.
                     </div>
                 </article>
-            </section>
+                </section>
 
-            <section id="adminPanel" class="panel role-panel">
+                <section id="adminPanel" class="panel role-panel">
                 <div class="panel-intro">
                     <div>
                         <p class="eyebrow">FoodLink AI organizer</p>
@@ -300,7 +359,49 @@
                         </div>
                     </div>
                 </article>
+                </section>
             </section>
+
+            <aside class="activity-rail">
+                <article class="rail-card">
+                    <div class="panel-intro">
+                        <div>
+                            <p class="eyebrow">Session</p>
+                            <h3>Role Snapshot</h3>
+                        </div>
+                    </div>
+                    <div class="rail-metrics">
+                        <div>
+                            <span>Current Role</span>
+                            <strong id="railRole">Not logged in</strong>
+                        </div>
+                        <div>
+                            <span>Primary Tool</span>
+                            <strong id="railPrimaryTool">Select a role</strong>
+                        </div>
+                        <div>
+                            <span>Live Signal</span>
+                            <strong id="railLiveSignal">Idle</strong>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="rail-card">
+                    <div class="panel-intro">
+                        <div>
+                            <p class="eyebrow">Recent activity</p>
+                            <h3>Activity Feed</h3>
+                        </div>
+                    </div>
+                    <div id="activityFeed" class="activity-feed">
+                        <div class="activity-item">
+                            <span class="activity-tag">System</span>
+                            <strong>Awaiting login</strong>
+                            <p>Choose a role to enter the FoodLink AI platform.</p>
+                        </div>
+                    </div>
+                </article>
+            </aside>
         </section>
     </main>
 

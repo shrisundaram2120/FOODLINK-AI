@@ -5,11 +5,17 @@ const FoodLinkAI = (() => {
     const mockLoginCard = document.getElementById("mockLoginCard");
     const mockLoginForm = document.getElementById("mockLoginForm");
     const loginRoleTitle = document.getElementById("loginRoleTitle");
+    const loginRoleHint = document.getElementById("loginRoleHint");
     const cancelLogin = document.getElementById("cancelLogin");
     const loginEmail = document.getElementById("loginEmail");
     const loginPassword = document.getElementById("loginPassword");
     const workspaceTitle = document.getElementById("workspaceTitle");
+    const workspaceSubtitle = document.getElementById("workspaceSubtitle");
+    const workspaceSectionTitle = document.getElementById("workspaceSectionTitle");
     const activeRoleBadge = document.getElementById("activeRoleBadge");
+    const sessionStatusChip = document.getElementById("sessionStatusChip");
+    const workspaceModeChip = document.getElementById("workspaceModeChip");
+    const workspaceSignalChip = document.getElementById("workspaceSignalChip");
     const logoutButton = document.getElementById("logoutButton");
     const form = document.getElementById("surplusForm");
     const cameraButton = document.getElementById("cameraButton");
@@ -32,6 +38,10 @@ const FoodLinkAI = (() => {
     const ngoStatus = document.getElementById("ngoStatus");
     const ngoFeed = document.getElementById("ngoFeed");
     const claimButton = document.getElementById("claimButton");
+    const railRole = document.getElementById("railRole");
+    const railPrimaryTool = document.getElementById("railPrimaryTool");
+    const railLiveSignal = document.getElementById("railLiveSignal");
+    const activityFeed = document.getElementById("activityFeed");
 
     const baseShelfLifeHours = {
         "Cooked Rice": 6,
@@ -51,21 +61,49 @@ const FoodLinkAI = (() => {
             title: "Hotel Partner Workspace",
             badge: "Hotel Partner",
             panelId: "hotelPanel",
-            loginTitle: "Hotel Partner Login"
+            loginTitle: "Hotel Partner Login",
+            loginHint: "Use this workspace to publish surplus food and review Freshness AI output.",
+            subtitle: "Manage hotel-side surplus posting, image upload, and AI freshness assessment.",
+            sectionTitle: "Hotel operations",
+            primaryTool: "Post Surplus"
         },
         ngo: {
             title: "NGO Partner Workspace",
             badge: "NGO Partner",
             panelId: "ngoPanel",
-            loginTitle: "NGO Partner Login"
+            loginTitle: "NGO Partner Login",
+            loginHint: "Use this workspace to review available pickups and claim collection windows.",
+            subtitle: "Track available pickups, freshness windows, and route-ready collection opportunities.",
+            sectionTitle: "NGO operations",
+            primaryTool: "Available Pickups"
         },
         admin: {
             title: "FoodLink Admin Workspace",
             badge: "FoodLink Admin",
             panelId: "adminPanel",
-            loginTitle: "FoodLink Admin Login"
+            loginTitle: "FoodLink Admin Login",
+            loginHint: "Use this workspace to oversee matching, dispatch rules, and NGO verification.",
+            subtitle: "Oversee cross-platform dispatch, NGO verification, and global matching decisions.",
+            sectionTitle: "Admin command center",
+            primaryTool: "Global Matching Engine"
         }
     };
+
+    function prependActivity(tag, title, detail) {
+        const item = document.createElement("div");
+        item.className = "activity-item";
+        item.innerHTML = `
+            <span class="activity-tag">${tag}</span>
+            <strong>${title}</strong>
+            <p>${detail}</p>
+        `;
+
+        activityFeed.prepend(item);
+
+        while (activityFeed.children.length > 5) {
+            activityFeed.removeChild(activityFeed.lastElementChild);
+        }
+    }
 
     function estimateAmbientTemperature(storageCondition) {
         if (storageCondition === "Frozen") return -5;
@@ -165,7 +203,15 @@ const FoodLinkAI = (() => {
         });
 
         workspaceTitle.textContent = config.title;
+        workspaceSubtitle.textContent = config.subtitle;
+        workspaceSectionTitle.textContent = config.sectionTitle;
         activeRoleBadge.textContent = config.badge;
+        railRole.textContent = config.badge;
+        railPrimaryTool.textContent = config.primaryTool;
+        railLiveSignal.textContent = "Workspace active";
+        sessionStatusChip.textContent = "Authenticated";
+        workspaceModeChip.textContent = config.badge;
+        workspaceSignalChip.textContent = `Primary: ${config.primaryTool}`;
     }
 
     function renderOrganizerView(posting) {
@@ -270,6 +316,8 @@ const FoodLinkAI = (() => {
     function openMockLogin(role) {
         pendingRole = role;
         loginRoleTitle.textContent = ROLE_CONFIG[role].loginTitle;
+        loginRoleHint.textContent = ROLE_CONFIG[role].loginHint;
+        mockLoginForm.reset();
         mockLoginCard.classList.remove("hidden");
         loginEmail.focus();
     }
@@ -292,6 +340,7 @@ const FoodLinkAI = (() => {
         loginOverlay.classList.add("hidden");
         appShell.classList.remove("app-hidden");
         showRoleDashboard(role);
+        prependActivity("Login", ROLE_CONFIG[role].badge, `Entered ${ROLE_CONFIG[role].title}.`);
         resetMockLogin();
     }
 
@@ -339,12 +388,25 @@ const FoodLinkAI = (() => {
         appShell.classList.add("app-hidden");
         activeRoleBadge.textContent = "Not logged in";
         workspaceTitle.textContent = "Multi-interface demo";
+        workspaceSubtitle.textContent = "Role-specific workflows for publishing surplus, dispatching pickups, and verifying NGO operations.";
+        workspaceSectionTitle.textContent = "Operations overview";
+        railRole.textContent = "Not logged in";
+        railPrimaryTool.textContent = "Select a role";
+        railLiveSignal.textContent = "Idle";
+        sessionStatusChip.textContent = "Demo session";
+        workspaceModeChip.textContent = "Ready";
+        workspaceSignalChip.textContent = "Waiting for activity";
         panels.forEach((panel) => panel.classList.remove("active"));
+        prependActivity("Logout", "Session ended", "Returned to the role selection overlay.");
     });
 
     claimButton.addEventListener("click", () => {
         if (!latestPosting) return;
         renderNgoView(latestPosting, true);
+        ngoStatus.textContent = "Claimed";
+        railLiveSignal.textContent = "Pickup claimed";
+        workspaceSignalChip.textContent = "Claim recorded";
+        prependActivity("NGO", "Pickup claimed", `${latestPosting.recommendedNgo} claimed ${latestPosting.foodType} from ${latestPosting.hotelName}.`);
     });
 
     form.addEventListener("reset", () => {
@@ -403,6 +465,10 @@ const FoodLinkAI = (() => {
         resultCard.classList.remove("hidden");
         renderOrganizerView(latestPosting);
         renderNgoView(latestPosting, false);
+        railLiveSignal.textContent = `${prediction.urgencyBadge} urgency`;
+        workspaceSignalChip.textContent = `Dispatch: ${latestPosting.recommendedNgo}`;
+        prependActivity("Hotel", "Surplus published", `${hotelName} posted ${quantityKg.toFixed(1)} kg of ${foodType} with ${prediction.urgencyBadge} urgency.`);
+        prependActivity("Admin", "Matching updated", `Suggested NGO: ${latestPosting.recommendedNgo} with ${latestPosting.pickupWindow.toLowerCase()}.`);
     });
 
     renderOrganizerView(null);
