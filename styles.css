@@ -22,6 +22,7 @@
 body {
     margin: 0;
     min-height: 100vh;
+    overflow-x: hidden;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     color: var(--text);
     background:
@@ -36,6 +37,8 @@ body {
     z-index: 20;
     overflow-y: auto;
     padding: 28px 16px;
+    display: grid;
+    align-items: center;
     background:
         radial-gradient(circle at top left, rgba(80, 166, 86, 0.18), transparent 24%),
         linear-gradient(135deg, rgba(8, 15, 9, 0.95), rgba(21, 36, 24, 0.98));
@@ -44,6 +47,9 @@ body {
 .login-shell {
     width: min(1240px, 100%);
     margin: 0 auto;
+    min-height: calc(100vh - 56px);
+    display: grid;
+    align-items: center;
 }
 
 .login-layout {
@@ -55,7 +61,7 @@ body {
 
 .login-story {
     display: grid;
-    gap: 20px;
+    gap: 16px;
 }
 
 .login-hero,
@@ -69,7 +75,7 @@ body {
 }
 
 .login-hero {
-    padding: 34px;
+    padding: 28px;
     background:
         radial-gradient(circle at top right, rgba(88, 190, 94, 0.2), transparent 22%),
         linear-gradient(135deg, rgba(44, 72, 47, 0.92), rgba(16, 27, 18, 0.98));
@@ -82,7 +88,7 @@ body {
 }
 
 .trust-card {
-    padding: 18px;
+    padding: 16px;
     border-radius: 22px;
     background: rgba(15, 25, 17, 0.82);
 }
@@ -109,9 +115,16 @@ body {
 }
 
 .login-role-card {
-    padding: 24px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
     background:
         linear-gradient(180deg, rgba(20, 33, 23, 0.94), rgba(13, 23, 15, 0.98));
+}
+
+.login-role-card h2 {
+    font-size: clamp(1.9rem, 3vw, 2.6rem);
+    margin-bottom: 12px;
 }
 
 .login-role-card.featured {
@@ -124,19 +137,24 @@ body {
 .login-role-card p:not(.eyebrow) {
     color: var(--muted);
     line-height: 1.65;
-    min-height: 84px;
+    min-height: 72px;
 }
 
 .role-list {
-    margin: 0 0 22px;
+    margin: 0 0 18px;
     padding-left: 18px;
     color: var(--muted);
     display: grid;
-    gap: 8px;
+    gap: 6px;
+    font-size: 0.98rem;
+}
+
+.login-role-card .button {
+    margin-top: auto;
 }
 
 .mock-login-card {
-    padding: 24px;
+    padding: 22px;
     position: sticky;
     top: 28px;
     background:
@@ -158,7 +176,7 @@ body {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 .login-mini-stats > div {
@@ -763,6 +781,14 @@ select:focus {
 
     .mock-login-card {
         position: static;
+    }
+
+    .login-overlay {
+        align-items: start;
+    }
+
+    .login-shell {
+        min-height: auto;
     }
 
     .action-row,

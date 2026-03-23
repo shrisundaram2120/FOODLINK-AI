@@ -110,6 +110,10 @@ const FoodLinkAI = (() => {
         }
     }
 
+    function resetViewport() {
+        window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    }
+
     function estimateAmbientTemperature(storageCondition) {
         if (storageCondition === "Frozen") return -5;
         if (storageCondition === "Refrigerated") return 4;
@@ -387,6 +391,7 @@ const FoodLinkAI = (() => {
         loginOverlay.classList.add("hidden");
         appShell.classList.remove("app-hidden");
         showRoleDashboard(role);
+        resetViewport();
         prependActivity("Login", ROLE_CONFIG[role].badge, `Entered ${ROLE_CONFIG[role].title}.`);
         resetMockLogin();
     }
@@ -439,6 +444,7 @@ const FoodLinkAI = (() => {
     logoutButton.addEventListener("click", () => {
         loginOverlay.classList.remove("hidden");
         appShell.classList.add("app-hidden");
+        resetViewport();
         activeRoleBadge.textContent = "Not logged in";
         workspaceTitle.textContent = "Multi-interface demo";
         workspaceSubtitle.textContent = "Role-specific workflows for publishing surplus, dispatching pickups, and verifying NGO operations.";
@@ -559,6 +565,7 @@ const FoodLinkAI = (() => {
 
     renderOrganizerView();
     renderNgoView();
+    resetViewport();
 
     return {
         handleLogin,
