@@ -38,6 +38,10 @@ const FoodLinkAI = (() => {
     const ngoStatus = document.getElementById("ngoStatus");
     const ngoFeed = document.getElementById("ngoFeed");
     const claimButton = document.getElementById("claimButton");
+    const receivedButton = document.getElementById("receivedButton");
+    const assignedFeed = document.getElementById("assignedFeed");
+    const ngoHistoryFeed = document.getElementById("ngoHistoryFeed");
+    const adminHistoryFeed = document.getElementById("adminHistoryFeed");
     const railRole = document.getElementById("railRole");
     const railPrimaryTool = document.getElementById("railPrimaryTool");
     const railLiveSignal = document.getElementById("railLiveSignal");
@@ -55,6 +59,7 @@ const FoodLinkAI = (() => {
     let selectedStorage = "Room Temperature";
     let latestPosting = null;
     let pendingRole = null;
+    const orders = [];
 
     const ROLE_CONFIG = {
         hotel: {
@@ -165,6 +170,75 @@ const FoodLinkAI = (() => {
         element.classList.add(`urgency-${badge.toLowerCase()}`);
     }
 
+    function buildOrderCard(order, stateClass, actionMarkup = "") {
+        const statusMap = {
+            pending_verification: { label: "Pending Verification", className: "status-pending" },
+            approved: { label: "Approved", className: "status-approved" },
+            assigned: { label: "Assigned", className: "status-assigned" },
+            completed: { label: "Completed", className: "status-completed" }
+        };
+
+        const statusConfig = statusMap[order.status] || {
+            label: "In Progress",
+            className: "status-pending"
+        };
+
+        return `
+            <article class="status-card ${stateClass}">
+                <div class="status-topline">
+                    <strong>${order.hotelName}</strong>
+                    <div class="inline-actions">
+                        <span class="status-pill ${statusConfig.className}">${statusConfig.label}</span>
+                        <span class="pill pill-urgency urgency-${order.prediction.urgencyBadge.toLowerCase()}">${order.prediction.urgencyBadge}</span>
+                    </div>
+                </div>
+                <div class="status-meta">
+                    <div>
+                        <span>Food Type</span>
+                        <strong>${order.foodType}</strong>
+                    </div>
+                    <div>
+                        <span>Quantity</span>
+                        <strong>${order.quantityKg} kg</strong>
+                    </div>
+                    <div>
+                        <span>Storage</span>
+                        <strong>${order.storageCondition}</strong>
+                    </div>
+                    <div>
+                        <span>Cook Time</span>
+                        <strong>${order.cookTime}</strong>
+                    </div>
+                    <div>
+                        <span>Suggested NGO</span>
+                        <strong>${order.recommendedNgo}</strong>
+                    </div>
+                    <div>
+                        <span>Shelf Life</span>
+                        <strong>${order.prediction.consensusShelfLifeHours.toFixed(1)} hrs</strong>
+                    </div>
+                </div>
+                ${actionMarkup}
+            </article>
+        `;
+    }
+
+    function getPendingOrder() {
+        return orders.find((order) => order.status === "pending_verification") || null;
+    }
+
+    function getApprovedOrder() {
+        return orders.find((order) => order.status === "approved") || null;
+    }
+
+    function getAssignedOrder() {
+        return orders.find((order) => order.status === "assigned") || null;
+    }
+
+    function getCompletedOrders() {
+        return orders.filter((order) => order.status === "completed");
+    }
+
     function predictFreshness({ foodType, storageCondition, hasImage }) {
         const xgBoostShelfLifeHours = runXGBoostShelfLifeModel({
             foodType,
@@ -214,103 +288,76 @@ const FoodLinkAI = (() => {
         workspaceSignalChip.textContent = `Primary: ${config.primaryTool}`;
     }
 
-    function renderOrganizerView(posting) {
-        organizerOpenCount.textContent = posting ? "1" : "0";
-        organizerPriority.textContent = posting ? posting.prediction.urgencyBadge : "None";
-        organizerSuggestedNgo.textContent = posting ? posting.recommendedNgo : "Awaiting post";
+    function renderOrganizerView() {
+        const pendingOrder = getPendingOrder();
+        const completedOrders = getCompletedOrders();
 
-        if (!posting) {
+        organizerOpenCount.textContent = orders.filter((order) => order.status !== "completed").length.toString();
+        organizerPriority.textContent = pendingOrder ? "1 pending" : "0 pending";
+        organizerSuggestedNgo.textContent = pendingOrder ? pendingOrder.recommendedNgo : "Awaiting post";
+
+        if (!pendingOrder) {
             organizerFeed.className = "feed-empty";
-            organizerFeed.textContent = "Publish a hotel surplus item to populate organizer routing details.";
-            return;
+            organizerFeed.textContent = "Publish a hotel surplus item to send it for organizer verification.";
+        } else {
+            organizerFeed.className = "stack-list";
+            organizerFeed.innerHTML = buildOrderCard(
+                pendingOrder,
+                "pending",
+                `<div class="inline-actions">
+                    <button type="button" class="button button-primary" data-approve-order="${pendingOrder.id}">Verify and Send to NGO</button>
+                </div>`
+            );
         }
 
-        organizerFeed.className = "";
-        organizerFeed.innerHTML = `
-            <article class="feed-card">
-                <div class="feed-title">
-                    <strong>${posting.hotelName}</strong>
-                    <span class="pill pill-urgency urgency-${posting.prediction.urgencyBadge.toLowerCase()}">${posting.prediction.urgencyBadge}</span>
-                </div>
-                <div class="feed-grid">
-                    <div>
-                        <span>Food Type</span>
-                        <strong>${posting.foodType}</strong>
-                    </div>
-                    <div>
-                        <span>Quantity</span>
-                        <strong>${posting.quantityKg} kg</strong>
-                    </div>
-                    <div>
-                        <span>Storage</span>
-                        <strong>${posting.storageCondition}</strong>
-                    </div>
-                    <div>
-                        <span>Cook Time</span>
-                        <strong>${posting.cookTime}</strong>
-                    </div>
-                    <div>
-                        <span>Consensus Shelf Life</span>
-                        <strong>${posting.prediction.consensusShelfLifeHours.toFixed(1)} hrs</strong>
-                    </div>
-                    <div>
-                        <span>Recommended NGO</span>
-                        <strong>${posting.recommendedNgo}</strong>
-                    </div>
-                </div>
-                <p class="meta-line">Dispatch note: prioritize ${posting.pickupWindow.toLowerCase()} and notify the matched NGO immediately.</p>
-            </article>
-        `;
+        if (!completedOrders.length) {
+            adminHistoryFeed.className = "feed-empty";
+            adminHistoryFeed.textContent = "Completed deliveries will appear here after NGO confirmation.";
+        } else {
+            adminHistoryFeed.className = "stack-list";
+            adminHistoryFeed.innerHTML = completedOrders
+                .map((order) => buildOrderCard(order, "completed"))
+                .join("");
+        }
     }
 
-    function renderNgoView(posting, claimed = false) {
-        ngoAvailableCount.textContent = posting ? "1" : "0";
-        ngoPickupWindow.textContent = posting ? posting.pickupWindow : "Awaiting post";
-        ngoStatus.textContent = claimed ? "Claimed" : posting ? "Ready to claim" : "Pending";
-        claimButton.disabled = !posting || claimed;
-        claimButton.textContent = claimed ? "Pickup Claimed" : "Claim Pickup";
+    function renderNgoView() {
+        const approvedOrder = getApprovedOrder();
+        const assignedOrder = getAssignedOrder();
+        const completedOrders = getCompletedOrders();
 
-        if (!posting) {
+        ngoAvailableCount.textContent = approvedOrder ? "1" : "0";
+        ngoPickupWindow.textContent = approvedOrder ? approvedOrder.pickupWindow : assignedOrder ? assignedOrder.pickupWindow : "Awaiting post";
+        ngoStatus.textContent = assignedOrder ? "Assigned" : approvedOrder ? "Ready to claim" : "Pending";
+        claimButton.disabled = !approvedOrder;
+        claimButton.textContent = approvedOrder ? "Claim Pickup" : "Claim Unavailable";
+        receivedButton.disabled = !assignedOrder;
+
+        if (!approvedOrder) {
             ngoFeed.className = "feed-empty";
-            ngoFeed.textContent = "No food listing yet. Once a hotel publishes a surplus batch, NGOs can claim it here.";
-            return;
+            ngoFeed.textContent = "No organizer-approved pickup yet. Orders appear here only after organizer verification.";
+        } else {
+            ngoFeed.className = "stack-list";
+            ngoFeed.innerHTML = buildOrderCard(approvedOrder, "pending");
         }
 
-        ngoFeed.className = "";
-        ngoFeed.innerHTML = `
-            <article class="feed-card">
-                <div class="feed-title">
-                    <strong>${posting.recommendedNgo}</strong>
-                    <span class="pill">${claimed ? "Assigned" : "Available"}</span>
-                </div>
-                <div class="feed-grid">
-                    <div>
-                        <span>Pickup From</span>
-                        <strong>${posting.hotelName}</strong>
-                    </div>
-                    <div>
-                        <span>Food Batch</span>
-                        <strong>${posting.foodType}</strong>
-                    </div>
-                    <div>
-                        <span>Quantity</span>
-                        <strong>${posting.quantityKg} kg</strong>
-                    </div>
-                    <div>
-                        <span>Freshness Window</span>
-                        <strong>${posting.pickupWindow}</strong>
-                    </div>
-                    <div>
-                        <span>Storage Condition</span>
-                        <strong>${posting.storageCondition}</strong>
-                    </div>
-                    <div>
-                        <span>Urgency</span>
-                        <strong>${posting.prediction.urgencyBadge}</strong>
-                    </div>
-                </div>
-            </article>
-        `;
+        if (!assignedOrder) {
+            assignedFeed.className = "feed-empty";
+            assignedFeed.textContent = "No assigned delivery yet. Claim a verified pickup to move it here.";
+        } else {
+            assignedFeed.className = "stack-list";
+            assignedFeed.innerHTML = buildOrderCard(assignedOrder, "assigned");
+        }
+
+        if (!completedOrders.length) {
+            ngoHistoryFeed.className = "feed-empty";
+            ngoHistoryFeed.textContent = "Completed NGO deliveries will be saved here.";
+        } else {
+            ngoHistoryFeed.className = "stack-list";
+            ngoHistoryFeed.innerHTML = completedOrders
+                .map((order) => buildOrderCard(order, "completed"))
+                .join("");
+        }
     }
 
     function openMockLogin(role) {
@@ -342,6 +389,12 @@ const FoodLinkAI = (() => {
         showRoleDashboard(role);
         prependActivity("Login", ROLE_CONFIG[role].badge, `Entered ${ROLE_CONFIG[role].title}.`);
         resetMockLogin();
+    }
+
+    function refreshAllViews() {
+        latestPosting = orders[orders.length - 1] || null;
+        renderOrganizerView();
+        renderNgoView();
     }
 
     cameraButton.addEventListener("click", () => {
@@ -401,12 +454,27 @@ const FoodLinkAI = (() => {
     });
 
     claimButton.addEventListener("click", () => {
-        if (!latestPosting) return;
-        renderNgoView(latestPosting, true);
-        ngoStatus.textContent = "Claimed";
+        const approvedOrder = getApprovedOrder();
+        if (!approvedOrder) return;
+
+        approvedOrder.status = "assigned";
+        refreshAllViews();
         railLiveSignal.textContent = "Pickup claimed";
         workspaceSignalChip.textContent = "Claim recorded";
-        prependActivity("NGO", "Pickup claimed", `${latestPosting.recommendedNgo} claimed ${latestPosting.foodType} from ${latestPosting.hotelName}.`);
+        prependActivity("NGO", "Pickup claimed", `${approvedOrder.recommendedNgo} claimed ${approvedOrder.foodType} from ${approvedOrder.hotelName}.`);
+    });
+
+    receivedButton.addEventListener("click", () => {
+        const assignedOrder = getAssignedOrder();
+        if (!assignedOrder) return;
+
+        assignedOrder.status = "completed";
+        refreshAllViews();
+        ngoStatus.textContent = "Completed";
+        railLiveSignal.textContent = "Delivery completed";
+        workspaceSignalChip.textContent = "History updated";
+        prependActivity("NGO", "Delivery received", `${assignedOrder.recommendedNgo} marked delivery complete for ${assignedOrder.foodType}.`);
+        prependActivity("Admin", "Order completed", `${assignedOrder.hotelName} order moved to completed delivery history.`);
     });
 
     form.addEventListener("reset", () => {
@@ -440,6 +508,7 @@ const FoodLinkAI = (() => {
         });
 
         latestPosting = {
+            id: `${Date.now()}`,
             hotelName,
             foodType,
             quantityKg: quantityKg.toFixed(1),
@@ -447,8 +516,11 @@ const FoodLinkAI = (() => {
             storageCondition: selectedStorage,
             prediction,
             recommendedNgo: recommendNgo(foodType, quantityKg),
-            pickupWindow: getPickupWindow(prediction.urgencyBadge)
+            pickupWindow: getPickupWindow(prediction.urgencyBadge),
+            status: "pending_verification"
         };
+
+        orders.push(latestPosting);
 
         consensusShelfLife.textContent = `${prediction.consensusShelfLifeHours.toFixed(1)} hrs`;
         xgBoostValue.textContent = `${prediction.xgBoostShelfLifeHours.toFixed(1)} hrs`;
@@ -463,16 +535,30 @@ const FoodLinkAI = (() => {
         });
 
         resultCard.classList.remove("hidden");
-        renderOrganizerView(latestPosting);
-        renderNgoView(latestPosting, false);
+        refreshAllViews();
         railLiveSignal.textContent = `${prediction.urgencyBadge} urgency`;
-        workspaceSignalChip.textContent = `Dispatch: ${latestPosting.recommendedNgo}`;
-        prependActivity("Hotel", "Surplus published", `${hotelName} posted ${quantityKg.toFixed(1)} kg of ${foodType} with ${prediction.urgencyBadge} urgency.`);
-        prependActivity("Admin", "Matching updated", `Suggested NGO: ${latestPosting.recommendedNgo} with ${latestPosting.pickupWindow.toLowerCase()}.`);
+        workspaceSignalChip.textContent = "Pending organizer verification";
+        prependActivity("Hotel", "Order submitted", `${hotelName} posted ${quantityKg.toFixed(1)} kg of ${foodType} for organizer verification.`);
+        prependActivity("Admin", "Verification required", `New hotel order is waiting for organizer approval before NGO dispatch.`);
     });
 
-    renderOrganizerView(null);
-    renderNgoView(null, false);
+    document.addEventListener("click", (event) => {
+        const approveButton = event.target.closest("[data-approve-order]");
+        if (!approveButton) return;
+
+        const order = orders.find((item) => item.id === approveButton.dataset.approveOrder);
+        if (!order) return;
+
+        order.status = "approved";
+        refreshAllViews();
+        railLiveSignal.textContent = "Verified by organizer";
+        workspaceSignalChip.textContent = `Ready for ${order.recommendedNgo}`;
+        prependActivity("Admin", "Order verified", `${order.hotelName} order was approved and released to NGO pickup queue.`);
+        prependActivity("NGO", "Pickup available", `${order.recommendedNgo} can now claim ${order.foodType} from ${order.hotelName}.`);
+    });
+
+    renderOrganizerView();
+    renderNgoView();
 
     return {
         handleLogin,

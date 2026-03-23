@@ -293,6 +293,31 @@
                         No food listing yet. Once a hotel publishes a surplus batch, NGOs can claim it here.
                     </div>
                 </article>
+
+                <article class="list-card">
+                    <div class="panel-intro">
+                        <div>
+                            <p class="eyebrow">Assigned delivery</p>
+                            <h3>Assigned Order</h3>
+                        </div>
+                        <button type="button" id="receivedButton" class="button button-primary" disabled>Received Delivery</button>
+                    </div>
+                    <div id="assignedFeed" class="feed-empty">
+                        No assigned delivery yet. Claim a verified pickup to move it here.
+                    </div>
+                </article>
+
+                <article class="list-card">
+                    <div class="panel-intro">
+                        <div>
+                            <p class="eyebrow">Completed delivery</p>
+                            <h3>Delivery History</h3>
+                        </div>
+                    </div>
+                    <div id="ngoHistoryFeed" class="feed-empty">
+                        Completed NGO deliveries will be saved here.
+                    </div>
+                </article>
                 </section>
 
                 <section id="adminPanel" class="panel role-panel">
@@ -310,8 +335,8 @@
                         <strong id="organizerOpenCount">0</strong>
                     </article>
                     <article class="metric-box">
-                        <span>Priority Dispatch</span>
-                        <strong id="organizerPriority">None</strong>
+                        <span>Verification Queue</span>
+                        <strong id="organizerPriority">0 pending</strong>
                     </article>
                     <article class="metric-box">
                         <span>Suggested NGO</span>
@@ -322,12 +347,12 @@
                 <article class="list-card">
                     <div class="panel-intro">
                         <div>
-                            <p class="eyebrow">Latest posting</p>
-                            <h3>Organizer decision view</h3>
+                            <p class="eyebrow">Verification desk</p>
+                            <h3>Pending Organizer Approval</h3>
                         </div>
                     </div>
                     <div id="organizerFeed" class="feed-empty">
-                        Publish a hotel surplus item to populate organizer routing details.
+                        Publish a hotel surplus item to send it for organizer verification.
                     </div>
                 </article>
 
@@ -357,6 +382,18 @@
                                 <strong>Match by urgency + proximity</strong>
                             </div>
                         </div>
+                    </div>
+                </article>
+
+                <article class="list-card">
+                    <div class="panel-intro">
+                        <div>
+                            <p class="eyebrow">Delivery history</p>
+                            <h3>Completed Orders</h3>
+                        </div>
+                    </div>
+                    <div id="adminHistoryFeed" class="feed-empty">
+                        Completed deliveries will appear here after NGO confirmation.
                     </div>
                 </article>
                 </section>
