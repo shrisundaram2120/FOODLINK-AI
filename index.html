@@ -3,51 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FoodLink AI | Post Surplus</title>
+    <title>FoodLink AI | Multi-Portal Prototype</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <main class="page-shell">
-        <section class="hero-panel">
-            <p class="eyebrow">Hotel portal</p>
-            <h1>Post surplus food before it becomes waste.</h1>
-            <p class="hero-copy">
-                Capture the food, log preparation details, and get an AI-based freshness estimate
-                to prioritize NGO pickup.
-            </p>
-            <div class="hero-metrics">
-                <article class="metric-card">
-                    <strong>TensorFlow CNN</strong>
-                    <span>Image-based spoilage scan placeholder</span>
+    <div id="loginOverlay" class="login-overlay">
+        <section class="login-shell">
+            <div class="login-hero">
+                <p class="eyebrow">Role-based access</p>
+                <h1>Sign in to the right FoodLink AI workspace.</h1>
+                <p class="lead">
+                    Choose your role, complete the mock login, and the prototype will open only
+                    the dashboard tools relevant to that user type.
+                </p>
+            </div>
+
+            <div class="role-card-grid">
+                <article class="login-role-card">
+                    <p class="eyebrow">Hotel partner</p>
+                    <h2>Hotel Partner</h2>
+                    <p>Access Post Surplus and Freshness AI tools for surplus food publishing.</p>
+                    <button type="button" class="button button-primary login-trigger" data-role="hotel">Login</button>
                 </article>
-                <article class="metric-card">
-                    <strong>XGBoost</strong>
-                    <span>Shelf-life estimation placeholder</span>
+
+                <article class="login-role-card">
+                    <p class="eyebrow">NGO partner</p>
+                    <h2>NGO Partner</h2>
+                    <p>Access Available Pickups and Claim tools to reserve food collections.</p>
+                    <button type="button" class="button button-primary login-trigger" data-role="ngo">Login</button>
+                </article>
+
+                <article class="login-role-card">
+                    <p class="eyebrow">FoodLink admin</p>
+                    <h2>FoodLink Admin</h2>
+                    <p>Access the Global Matching Engine and NGO Verification workflow.</p>
+                    <button type="button" class="button button-primary login-trigger" data-role="admin">Login</button>
+                </article>
+            </div>
+
+            <section id="mockLoginCard" class="mock-login-card hidden">
+                <div class="panel-intro">
+                    <div>
+                        <p class="eyebrow">Mock login</p>
+                        <h3 id="loginRoleTitle">Role Login</h3>
+                    </div>
+                </div>
+                <form id="mockLoginForm" class="mock-login-form">
+                    <div class="field-group">
+                        <label for="loginEmail">Email</label>
+                        <input id="loginEmail" type="email" placeholder="name@foodlink.ai" required>
+                    </div>
+                    <div class="field-group">
+                        <label for="loginPassword">Password</label>
+                        <input id="loginPassword" type="password" placeholder="Enter password" required>
+                    </div>
+                    <div class="action-row">
+                        <button type="submit" class="button button-primary">Enter Dashboard</button>
+                        <button type="button" id="cancelLogin" class="button button-secondary">Back</button>
+                    </div>
+                </form>
+            </section>
+        </section>
+    </div>
+
+    <main id="appShell" class="shell app-hidden">
+        <section class="masthead">
+            <div class="masthead-copy">
+                <p class="eyebrow">Food rescue platform</p>
+                <h1>One flow, three interfaces, zero food wasted.</h1>
+                <p class="lead">
+                    This prototype now includes dedicated interfaces for hotel managers,
+                    FoodLink AI organizers, and NGO partners with one shared freshness workflow.
+                </p>
+            </div>
+
+            <div class="platform-strip">
+                <article class="stat-card">
+                    <span>Hotel Portal</span>
+                    <strong>Post surplus</strong>
+                </article>
+                <article class="stat-card">
+                    <span>Organizer Desk</span>
+                    <strong>Match and dispatch</strong>
+                </article>
+                <article class="stat-card">
+                    <span>NGO Board</span>
+                    <strong>Claim and collect</strong>
                 </article>
             </div>
         </section>
 
-        <section class="form-panel">
-            <div class="panel-header">
+        <section class="workspace">
+            <div class="workspace-header">
                 <div>
-                    <p class="eyebrow">FoodLink AI</p>
-                    <h2>Post Surplus</h2>
+                    <p class="eyebrow">Authenticated workspace</p>
+                    <h2 id="workspaceTitle">Multi-interface demo</h2>
                 </div>
-                <span class="status-pill">Dark charcoal theme</span>
+                <div class="role-tabs">
+                    <span id="activeRoleBadge" class="pill">Not logged in</span>
+                    <button type="button" id="logoutButton" class="role-tab">Logout</button>
+                </div>
             </div>
 
-            <form id="surplusForm" class="surplus-form">
-                <div class="field-group">
-                    <label for="photoInput">Photo Upload</label>
-                    <div class="photo-shell">
-                        <button type="button" class="button button-primary" id="cameraButton">Trigger Camera</button>
-                        <input id="photoInput" type="file" accept="image/*" capture="environment" hidden>
-                        <p class="helper">Use camera capture for TensorFlow CNN spoilage analysis.</p>
-                        <img id="photoPreview" class="photo-preview hidden" alt="Food preview">
+            <section id="hotelPanel" class="panel role-panel">
+                <div class="panel-intro">
+                    <div>
+                        <p class="eyebrow">Hotel interface</p>
+                        <h3>Post Surplus</h3>
                     </div>
+                    <span class="pill">Dark charcoal + forest green</span>
                 </div>
 
-                <div class="form-grid">
+                <form id="surplusForm" class="surplus-form">
+                    <div class="field-group full-span">
+                        <label for="hotelName">Hotel Name</label>
+                        <input id="hotelName" type="text" placeholder="Grand Horizon Hotel" required>
+                    </div>
+
+                    <div class="field-group full-span">
+                        <label for="photoInput">Photo Upload</label>
+                        <div class="photo-shell">
+                            <button type="button" class="button button-primary" id="cameraButton">Trigger Camera</button>
+                            <input id="photoInput" type="file" accept="image/*" capture="environment" hidden>
+                            <p class="helper">Camera input is used as the TensorFlow CNN placeholder signal.</p>
+                            <img id="photoPreview" class="photo-preview hidden" alt="Food preview">
+                        </div>
+                    </div>
+
                     <div class="field-group">
                         <label for="foodType">Food Type</label>
                         <select id="foodType" required>
@@ -78,42 +160,146 @@
                             <button type="button" class="chip" data-storage="Frozen">Frozen</button>
                         </div>
                     </div>
-                </div>
 
-                <div class="button-row">
-                    <button type="submit" class="button button-primary">Analyze Freshness</button>
-                    <button type="reset" class="button button-secondary">Reset Form</button>
-                </div>
-            </form>
+                    <div class="action-row full-span">
+                        <button type="submit" class="button button-primary">Analyze and Publish</button>
+                        <button type="reset" class="button button-secondary">Reset Form</button>
+                    </div>
+                </form>
 
-            <section id="resultCard" class="result-card hidden" aria-live="polite">
-                <div class="result-header">
+                <section id="resultCard" class="result-card hidden" aria-live="polite">
+                    <div class="panel-intro">
+                        <div>
+                            <p class="eyebrow">Hotel result</p>
+                            <h3>Consensus Shelf Life</h3>
+                        </div>
+                        <span id="urgencyBadge" class="pill pill-urgency">Green</span>
+                    </div>
+
+                    <div class="metric-grid">
+                        <article class="metric-box">
+                            <span>Consensus</span>
+                            <strong id="consensusShelfLife">0.0 hrs</strong>
+                        </article>
+                        <article class="metric-box">
+                            <span>XGBoost</span>
+                            <strong id="xgBoostValue">0.0 hrs</strong>
+                        </article>
+                        <article class="metric-box">
+                            <span>TensorFlow CNN</span>
+                            <strong id="tensorFlowValue">0.0 hrs</strong>
+                        </article>
+                    </div>
+
+                    <div class="notes-box">
+                        <h4>AI Notes</h4>
+                        <ul id="notesList"></ul>
+                    </div>
+                </section>
+            </section>
+
+            <section id="ngoPanel" class="panel role-panel">
+                <div class="panel-intro">
                     <div>
-                        <p class="eyebrow">Prediction output</p>
-                        <h3>Consensus Shelf Life</h3>
+                        <p class="eyebrow">NGO interface</p>
+                        <h3>Available Pickups</h3>
                     </div>
-                    <span id="urgencyBadge" class="urgency-badge">Green</span>
+                    <span class="pill">Claim-ready inventory</span>
                 </div>
 
-                <div class="result-grid">
-                    <div class="result-metric">
-                        <span>Consensus</span>
-                        <strong id="consensusShelfLife">0.0 hrs</strong>
-                    </div>
-                    <div class="result-metric">
-                        <span>XGBoost</span>
-                        <strong id="xgBoostValue">0.0 hrs</strong>
-                    </div>
-                    <div class="result-metric">
-                        <span>TensorFlow CNN</span>
-                        <strong id="tensorFlowValue">0.0 hrs</strong>
-                    </div>
+                <div class="dashboard-grid">
+                    <article class="metric-box">
+                        <span>Available Pickups</span>
+                        <strong id="ngoAvailableCount">0</strong>
+                    </article>
+                    <article class="metric-box">
+                        <span>Recommended Window</span>
+                        <strong id="ngoPickupWindow">Awaiting post</strong>
+                    </article>
+                    <article class="metric-box">
+                        <span>Collection Status</span>
+                        <strong id="ngoStatus">Pending</strong>
+                    </article>
                 </div>
 
-                <div class="notes-box">
-                    <h4>AI Notes</h4>
-                    <ul id="notesList"></ul>
+                <article class="list-card">
+                    <div class="panel-intro">
+                        <div>
+                            <p class="eyebrow">Pickup details</p>
+                            <h3>Claim Tool</h3>
+                        </div>
+                        <button type="button" id="claimButton" class="button button-secondary" disabled>Claim Pickup</button>
+                    </div>
+                    <div id="ngoFeed" class="feed-empty">
+                        No food listing yet. Once a hotel publishes a surplus batch, NGOs can claim it here.
+                    </div>
+                </article>
+            </section>
+
+            <section id="adminPanel" class="panel role-panel">
+                <div class="panel-intro">
+                    <div>
+                        <p class="eyebrow">FoodLink AI organizer</p>
+                        <h3>Global Matching Engine</h3>
+                    </div>
+                    <span class="pill">Live routing prototype</span>
                 </div>
+
+                <div class="dashboard-grid">
+                    <article class="metric-box">
+                        <span>Open Listings</span>
+                        <strong id="organizerOpenCount">0</strong>
+                    </article>
+                    <article class="metric-box">
+                        <span>Priority Dispatch</span>
+                        <strong id="organizerPriority">None</strong>
+                    </article>
+                    <article class="metric-box">
+                        <span>Suggested NGO</span>
+                        <strong id="organizerSuggestedNgo">Awaiting post</strong>
+                    </article>
+                </div>
+
+                <article class="list-card">
+                    <div class="panel-intro">
+                        <div>
+                            <p class="eyebrow">Latest posting</p>
+                            <h3>Organizer decision view</h3>
+                        </div>
+                    </div>
+                    <div id="organizerFeed" class="feed-empty">
+                        Publish a hotel surplus item to populate organizer routing details.
+                    </div>
+                </article>
+
+                <article class="list-card">
+                    <div class="panel-intro">
+                        <div>
+                            <p class="eyebrow">Admin controls</p>
+                            <h3>NGO Verification</h3>
+                        </div>
+                    </div>
+                    <div class="feed-card">
+                        <div class="feed-grid">
+                            <div>
+                                <span>Verification Queue</span>
+                                <strong>12 NGOs pending</strong>
+                            </div>
+                            <div>
+                                <span>High-trust Partners</span>
+                                <strong>48 verified</strong>
+                            </div>
+                            <div>
+                                <span>Region Coverage</span>
+                                <strong>North, Central, East</strong>
+                            </div>
+                            <div>
+                                <span>Current Rule</span>
+                                <strong>Match by urgency + proximity</strong>
+                            </div>
+                        </div>
+                    </div>
+                </article>
             </section>
         </section>
     </main>
